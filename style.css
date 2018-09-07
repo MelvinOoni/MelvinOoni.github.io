@@ -27,7 +27,7 @@ li.navbar a {
 }
 
 li.navbar a:hover:not(.active) {
-    background-color: rgb(44, 8, 202);
+    background-color: rgb(1, 252, 147);
 }
 
 .foto{
@@ -40,7 +40,7 @@ li.navbar a:hover:not(.active) {
 }
 
 @keyframes spinning{
-    from{
+    from {
         transform: rotate(1deg)
     }
     to{
