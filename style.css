@@ -48,7 +48,7 @@ li.navbar a:hover:not(.active) {
     }
 }
 
-.standard{
+p.profile{
     border: 2px double #000000;
     overflow: hidden;
     padding: 10px;
@@ -96,6 +96,9 @@ h1 {
     margin: 15px;
 }
 
+b{
+    margin: -15px;
+}
 .schema, th, td{
     border: 1px solid black;
     border-collapse: collapse;
