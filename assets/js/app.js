@@ -86,3 +86,58 @@ if (BMI < 18.5) {
         }
     }
 }
+
+const grade = 10
+console.log (grade)
+
+if (grade <6) {
+    console.log ("onvoldoende");
+} else {
+    } if (grade >=6 && 7 >= grade) {
+        console.log ("voldoende");
+        } else {
+            if (grade > 7 && 9 >= grade) {
+            console.log ("goed");
+            } else {
+                if (grade > 9) {
+                console.log ("uitmuntend");
+            }
+        }
+    }
+
+    switch (grade) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5: 
+          console.log('onvoldoende');
+          break;
+        case 6:
+        case 7:
+          console.log('voldoende');
+          break;
+        case 8:
+        case 9:
+          console.log('goed');
+          break;
+        case 10:
+          console.log('uitmuntend');
+          break;
+        default:
+          console.log('Sorry');
+      }
+const purchasedBook = true;
+const job = 'teacher';
+const inTrain = false;
+
+if (purchasedBook && inTrain == true) {
+    if (job == 'teacher') {
+        console.log ('finally i can enjoy my book!')
+    }
+    else {
+        console.log ('I cant enjoy my book!')
+    }
+} else {
+    console.log('I cant enjoy my book!')
+}
