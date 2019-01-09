@@ -4,7 +4,6 @@
 class Player extends Entity {
 
     private readonly keyBoardListener: KeyBoardListener;
-    private lives: number;
 
     public constructor(
         canvas: HTMLCanvasElement,
@@ -13,12 +12,10 @@ class Player extends Entity {
         yPos: number,
         width: number,
         height: number,
-        lives: number = 3
     ) {
         super(canvas, imgSource, xPos, yPos, width, height);
 
         this.keyBoardListener = new KeyBoardListener();
-        this.lives = lives;
     }
 
     public move(): void {
@@ -71,17 +68,5 @@ class Player extends Entity {
             return true;
         }
         return false;
-    }
-
-    public getLives(): number {
-        return this.lives;
-    }
-
-    public removeLife() {
-        this.lives --;
-        if (this.lives == 0) {
-            alert('Game over! Je bent al je levens kwijtgeraakt')
-            location.reload();
-        }
     }
 }

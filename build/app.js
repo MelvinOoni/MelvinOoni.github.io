@@ -351,10 +351,9 @@ class KeyBoardListener {
     }
 }
 class Player extends Entity {
-    constructor(canvas, imgSource, xPos, yPos, width, height, lives = 3) {
+    constructor(canvas, imgSource, xPos, yPos, width, height) {
         super(canvas, imgSource, xPos, yPos, width, height);
         this.keyBoardListener = new KeyBoardListener();
-        this.lives = lives;
     }
     move() {
         if (this.keyBoardListener.getLeftPressed()) {
@@ -397,16 +396,6 @@ class Player extends Entity {
         }
         return false;
     }
-    getLives() {
-        return this.lives;
-    }
-    removeLife() {
-        this.lives--;
-        if (this.lives == 0) {
-            alert('Game over! Je bent al je levens kwijtgeraakt');
-            location.reload();
-        }
-    }
 }
 class ViewBase {
     constructor() {
@@ -421,10 +410,11 @@ class DifficultyView extends ViewBase {
         super();
         this.createScreen = () => {
             this.canvas.writeTextToCanvas('Europe Explorer', 100, this.canvas.getCenter().X, 100, "white", "center");
-            this.canvas.writeTextToCanvas('Kies een niveau:', 40, this.canvas.getCenter().X, 165, "white", "center");
-            this.canvas.writeEasyDifficultyButtonToCanvas("./assets/images/makkelijk.png", 302, 70, this.canvas.getCenter().Y - 200);
-            this.canvas.writeTopoDifficultyButtonToCanvas("./assets/images/topografie.png", 348, 73, this.canvas.getCenter().Y - 350);
-            this.canvas.writeDifficultDifficultyButtonToCanvas("./assets/images/moeilijk.png", 253, 71, this.canvas.getCenter().Y - 500);
+            this.canvas.writeTextToCanvas('Kies een niveau:', 40, this.canvas.getCenter().X, 190, "white", "center");
+            this.canvas.writeTextToCanvas("Kies je moeilijkheidsgraad om het spel te beginnen. De balk bestuur je met de pijltjestoetsen", 20, this.canvas.getCenter().X, this.canvas.getHeight() - 50, "white");
+            this.canvas.writeEasyDifficultyButtonToCanvas("./assets/images/makkelijk.png", 302, 70, this.canvas.getCenter().Y - 250);
+            this.canvas.writeTopoDifficultyButtonToCanvas("./assets/images/topografie.png", 348, 73, this.canvas.getCenter().Y - 400);
+            this.canvas.writeDifficultDifficultyButtonToCanvas("./assets/images/moeilijk.png", 253, 71, this.canvas.getCenter().Y - 550);
         };
         const canvasElement = document.getElementById('canvas');
         this.canvas = new Canvas(canvasElement);
@@ -448,7 +438,8 @@ class LevelView extends ViewBase {
                 this.player.draw();
                 this.ball.move();
                 this.ball.draw();
-                this.canvas.writeTextToCanvas(`lives: ${this.player.getLives()}`, 40, this.canvas.getWidth() - 100, this.canvas.getHeight() - 60, "black");
+                this.canvas.writeTextToCanvas(`score: ${this.score}`, 40, 10, this.canvas.getHeight() - 60, "black", "left");
+                this.canvas.writeTextToCanvas(`lives: ${this.lives}`, 40, this.canvas.getWidth() - 100, this.canvas.getHeight() - 60, "black");
                 if (this.player.isCollidingWithBallLeft(this.ball)) {
                     this.ball.collidedWithPlayerLeft();
                 }
@@ -463,8 +454,10 @@ class LevelView extends ViewBase {
                     if (this.ball.isCollidingWithBlock(this.blockArray[index])) {
                         this.ball.collidedWithBlock();
                         this.blockArray.splice(index, 1);
+                        this.score += 20;
                         if (this.blockArray.length < 1) {
-                            alert('Goed gedaan!');
+                            this.score += 100;
+                            alert(`Goed gedaan! Je hebt het spel uitgespeeld. Je score was: ${this.score}`);
                             location.reload();
                         }
                         if (this.blockArray.length == 28 || this.blockArray.length == 24 || this.blockArray.length == 20 || this.blockArray.length == 16 || this.blockArray.length == 12 || this.blockArray.length == 8 || this.blockArray.length == 4) {
@@ -499,19 +492,21 @@ class LevelView extends ViewBase {
                 }
             }
             if (this.ball.getY() + this.ball.getHeight() > this.canvas.getHeight()) {
-                this.player.removeLife();
+                this.removeLife();
                 this.ball.removeLife();
             }
         };
         this.compareAnswers = () => {
             if (this.questions[this.numberRandom].answer === this.questionAnswer) {
                 this.gameState = "COUNTDOWN";
+                this.score += 100;
                 this.startRightCountdown(5);
             }
             else {
                 this.gameState = "COUNTDOWN";
-                this.player.removeLife();
+                this.score -= 50;
                 this.startWrongCountdown(5);
+                this.removeLife();
             }
         };
         const canvasElement = document.getElementById('canvas');
@@ -525,6 +520,8 @@ class LevelView extends ViewBase {
         this.player = new Player(canvasElement, "./assets/images/player/playerBlue.png", this.canvas.getCenter().X - 100, this.canvas.getHeight() - 30, 200, 25);
         this.ball = new Ball(canvasElement, "./assets/images/balls/redball.png", this.canvas.getCenter().X, 500, 35, 35);
         this.makeBlockArray();
+        this.score = 0;
+        this.lives = 3;
         window.setInterval(this.createScreen, 1000 / 60);
     }
     startRightCountdown(seconds) {
@@ -534,7 +531,7 @@ class LevelView extends ViewBase {
         var interval = setInterval(() => {
             this.canvas.clearCanvas();
             this.canvas.writeImageToCanvas(`./assets/images/question/${this.questions[this.numberRandom].picture}`, 25, 200);
-            this.canvas.writeTextToCanvas(`Je antwoord ${this.questionAnswer} is goed`, 30, this.canvas.getCenter().X, 125, "white");
+            this.canvas.writeTextToCanvas(`Je antwoord ${this.questionAnswer} is goed. Je hebt 100 punten verdiend`, 30, this.canvas.getCenter().X, 125, "white");
             this.canvas.writeTextToCanvas(`${counter}`, 150, this.canvas.getCenter().X + 235, this.canvas.getCenter().Y + 350, "white");
             this.canvas.writeImageToCanvas("./assets/images/goedgedaan.png", this.canvas.getCenter().X + 100, this.canvas.getCenter().Y - 150);
             counter--;
@@ -558,10 +555,10 @@ class LevelView extends ViewBase {
         var interval = setInterval(() => {
             this.canvas.clearCanvas();
             this.canvas.writeImageToCanvas(`./assets/images/question/${this.questions[this.numberRandom].picture}`, 25, 200);
-            this.canvas.writeTextToCanvas(`Je antwoord ${this.questionAnswer} is fout`, 30, this.canvas.getCenter().X, 75, "white");
+            this.canvas.writeTextToCanvas(`Je antwoord ${this.questionAnswer} is fout. Je bent 1 leven en 50 punten kwijtgeraakt`, 30, this.canvas.getCenter().X, 75, "white");
             this.canvas.writeTextToCanvas(`${counter}`, 150, this.canvas.getCenter().X + 250, this.canvas.getCenter().Y + 350, "white");
-            this.canvas.writeTextToCanvas("Het goede antwoord was: ", 30, this.canvas.getCenter().X, 150, "white");
-            this.canvas.writeTextToCanvas(`${this.questions[this.numberRandom].answer}`, 30, this.canvas.getCenter().X + 225, 150, "lightgreen", "left");
+            this.canvas.writeTextToCanvas("Het goede antwoord was:", 30, this.canvas.getCenter().X, 150, "white");
+            this.canvas.writeTextToCanvas(` ${this.questions[this.numberRandom].answer}`, 30, this.canvas.getCenter().X + 225, 150, "lightgreen", "left");
             this.canvas.writeImageToCanvas("./assets/images/helaas.png", this.canvas.getCenter().X + 100, this.canvas.getCenter().Y - 150);
             counter--;
             if (counter < 0) {
@@ -577,6 +574,13 @@ class LevelView extends ViewBase {
         }, 1000);
     }
     ;
+    removeLife() {
+        this.lives--;
+        if (this.lives == 0) {
+            alert(`Game over! Je bent al je levens kwijtgeraakt. Je score was ${this.score}`);
+            location.reload();
+        }
+    }
     setEasyQuestions() {
         this.questions = [
             {
@@ -1089,12 +1093,12 @@ class LevelView extends ViewBase {
                 answer: "Pyreneeën",
                 picture: "westEuropa.png"
             }, {
-                question: "Welke gebergte ligt er op plaats iii?",
+                question: "Welke gebied ligt er op plaats iii?",
                 a: "Ruhrgebied",
                 b: "Alpen",
                 c: "Ardennen",
                 answer: "Ruhrgebied",
-                picture: "westEuropa.pn"
+                picture: "westEuropa.png"
             }, {
                 question: "Welke gebergte ligt er op plaats iv?",
                 a: "Ruhrgebied",
