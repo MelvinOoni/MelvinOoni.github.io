@@ -379,7 +379,7 @@ class LevelView extends ViewBase {
             answer: "Dublin",
             picture: "westEuropa.png"
         }, {
-            question: "WWat is de naam van de stad op plaats 7?",
+            question: "Wat is de naam van de stad op plaats 7?",
             a: "Glasgow",
             b: "Marseille",
             c: "Berlijn",
